@@ -104,10 +104,10 @@ def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, 
             raise ValueError("new_event_ids is an empty dict. No empty dictionaries allowed as input.")      
         
         if len(old_event_ids) <= len(new_event_ids):
-            raise ValueError("""Length of new_event_ids must be shorter than of old_event_ids, \n
-                    to combine old event ids into the new ones.""")
+            raise ValueError("Length of new_event_ids must be shorter than of old_event_ids, \n \
+                    to combine old event ids into the new ones.")
         
-        elif not len(old_event_ids)%len(new_event_ids) == 0:
+        elif len(old_event_ids)%len(new_event_ids) != 0:
             raise ValueError("""old_event_ids must be divisible by new_event_ids, \n 
                     the function takes every (# old_event_ids \ # new_event_ids) old event ids \n 
                     and combines them to a single new event id""")

@@ -1,6 +1,6 @@
-venv
+venv/**
 **/__pycache__
 *.egg-info
 .tox
 build
-SUBS_DIR
+SUBS_DIR/**
