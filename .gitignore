@@ -4,3 +4,8 @@ venv/**
 .tox
 build
 SUBS_DIR/**
+SUBS_DIR/subject_003/fix_xc,lf_c,rfhp0.1Hz
+SUBS_DIR/subject_003/csd_baseline.h5
+SUBS_DIR/subject_003/hs_file
+SUBS_DIR/subject_003/datafinalLow.mat
+SUBS_DIR/subject_003/config
