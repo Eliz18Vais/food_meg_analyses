@@ -86,6 +86,7 @@ def create_mne_info(sub_dict: dict) -> mne.Info|None:
     
     except Exception as e:
         print("An error has occured:", e)
+        traceback.print_exc()
 
     else:
         try:

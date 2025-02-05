@@ -79,17 +79,18 @@ def extract_from_dict(sub_dict: dict) -> tuple[np.ndarray|None, np.ndarray|None,
     except ValueError as e:
         print("An error occured:")
         print("sub_dict has missing keys or incorrect types of values, check dictionary or change extract_from_dict function")
-        
+        traceback.print_exc()
+
     except Exception as e:
         print("An error occured:", e)
-
+        traceback.print_exc()
     else:
         try:
             # Extract data and trial info
-            data = sub_dict.get("data").get("trial") 
-            events_code = np.array(sub_dict.get("data").get("trialinfo")[:, 0], dtype=int) # convert from float to int
-            ch_names = sub_dict.get("data").get("label")
-            sfreq = sub_dict.get("data").get("fsample")
+            data = np.array(sub_dict["datafinalLow"]["trial"])
+            events_code = np.array(sub_dict["datafinalLow"]["trialinfo"][:, 0], dtype=int) # convert from float to int
+            ch_names = sub_dict["datafinalLow"]["label"]
+            sfreq = sub_dict["datafinalLow"]["fsample"]
 
         except Exception as e:
             print("An error occured:", e)
@@ -249,10 +250,10 @@ def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info) -> tuple[mne.Epoc
 
             baseline = config.baseline_time # tuple for baseline time (-0.3,0)
 
-            oddball_id = oddball_id # int of code for oddball stimulus
+            oddball_id = config.oddball_id # int of code for oddball stimulus
 
 
-            data, events_code = extract_from_dict(sub_dict)
+            data, events_code,_,_ = extract_from_dict(sub_dict)
 
             # Identify and remove oddball trials
             data, events_code =  remove_oddball_trials(data, events_code, oddball_id)
@@ -330,7 +331,9 @@ def convert_mat_to_epochs(file_name: os.PathLike, info = None) -> tuple[mne.Epoc
 
                 if info is None:
                     mne_info = create_info.create_mne_info(sub_dict)
-                    
+                else:
+                    mne_info = info 
+
                 epochs, evoked = convert_dict_to_epochs(sub_dict, mne_info)
 
             except Exception as e:

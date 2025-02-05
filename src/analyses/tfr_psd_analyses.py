@@ -58,7 +58,8 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
                 tfr_contrast = evo_contrast.compute_tfr(method='morlet', tmin=config.baseline_time[0], tmax=config.post_stim_time[1], freqs=freqs)
 
                 tfr_contrast.save(config.get_tfr_contrast_path(con1, con2))
-
+                traceback.print_exc()
+                
             except ValueError as e:
                 print(f"Error in computing the TFR: {e}\nAdjust the frequency range. freqs=(8, 24, 2) works best!")
 

@@ -3,7 +3,6 @@ import mne
 import numpy as np
 from src import config
 import os
-from cerberus import Validator
 import numbers
 
 def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: list, time_range: tuple):
@@ -38,9 +37,7 @@ def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, 
         raise ValueError("time_range should be a tuple with two entries")
     
     elif max(time_range) > max(config.post_stim_time) or min(time_range) > min(config.baseline_time):
-        raise ValueError(f"maximum and minimum of time_range can't extend the timerange of epochs: \
-                        {config.baseline_time}-{config.post_stim_time}. \n See config.py and convert_dict_to_epochs \
-                            function.")
+        raise ValueError(f"maximum and minimum of time_range can't extend the timerange of epochs:{config.baseline_time}-{config.post_stim_time}. See config.py and convert_dict_to_epochs function.")
 
 def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple, con2: tuple):
     
@@ -75,14 +72,12 @@ def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarr
         raise ValueError(f"con1[1] and con2[1] can't be empty lists")
 
     elif not all(isinstance(item, str) for item in con1[1]) or not all(isinstance(item, str) for item in con2[1]):
-            raise TypeError(f"Second entry in con1 and con2 tuples should be a list of strings, \n \
-                not all entries in list are strings.")
+            raise TypeError("Second entry in con1 and con2 tuples should be a list of strings, \n not all entries in list are strings.")
 
     elif not set(con1[1]).issubset(epochs.event_id.keys()) or  not set(con2[1]).issubset(epochs.event_id.keys()):
-        raise ValueError(f"con1[1] and con2[1] should be lists with names of keys contained in epochs. \n \
-                            con1[1] or con2[1] strings are not in epochs.event_id.keys()")
+        raise ValueError("con1[1] and con2[1] should be lists with names of keys contained in epochs. \n con1[1] or con2[1] strings are not in epochs.event_id.keys()")
 
-def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: dict):
+def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, _new_event_ids: dict):
         
         # search for input type errors
         if not isinstance(epochs, mne.EpochsArray):
@@ -97,19 +92,18 @@ def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, 
         elif not set(old_event_ids.keys()).issubset(epochs.event_id.keys()):
             raise ValueError("some or all given old_event_ids keys are not found in epochs.event_id.keys().")
         
-        if not isinstance(new_event_ids, dict):
+        if not isinstance(_new_event_ids, dict):
             raise TypeError("new_event_ids should be a dict, got input of another type")
         
-        elif not len(new_event_ids)>0:
+        elif not len(_new_event_ids)>0:
             raise ValueError("new_event_ids is an empty dict. No empty dictionaries allowed as input.")      
         
-        if len(old_event_ids) <= len(new_event_ids):
-            raise ValueError("Length of new_event_ids must be shorter than of old_event_ids, \n \
-                    to combine old event ids into the new ones.")
+        if len(old_event_ids) <= len(_new_event_ids):
+            raise ValueError("Length of new_event_ids must be shorter than of old_event_ids, \n to combine old event ids into the new ones.")
         
-        elif len(old_event_ids)%len(new_event_ids) != 0:
-            raise ValueError("""old_event_ids must be divisible by new_event_ids, \n 
-                    the function takes every (# old_event_ids \ # new_event_ids) old event ids \n 
+        elif len(old_event_ids)%len(_new_event_ids) != 0:
+            raise ValueError("""old_event_ids must be divisible by new_event_ids,
+                    the function takes every (# old_event_id / # new_event_ids) old event ids
                     and combines them to a single new event id""")
 
 def validate_input_create_events_for_epochs(events_code: np.ndarray):
@@ -136,10 +130,8 @@ def validate_input_remove_oddball_trials(data: np.ndarray, events_code: np.ndarr
     if not isinstance(oddball_id, int):
         raise TypeError("oddball_id should be an int, another input type was given")
 
-    if not data.shape != (config.trial_number, config.channels_number, config.time_points):
-        raise ValueError("Shape of data is incorrect, should be: \n \
-                (trial_number, channels_number, time_points) \n \
-                see config.py")
+    if data.shape != (config.trial_number, config.channels_number, config.time_points):
+        raise ValueError("Shape of data is incorrect, should be: \n (trial_number, channels_number, time_points) \n see config.py")
 
     # check if the events_code length matches the number of trials in the data:
     if not len(data) == len(events_code):
@@ -155,31 +147,29 @@ def validate_input_extract_from_dict(sub_dict: dict):
         
         else:
             #validate key existence and values type in dict:
-                    
-            v = Validator(config.sub_dict_schema)
-
-            if v.validate(sub_dict) is False:
-                raise ValueError("sub_dict has missing/mismatching keys and wrong value types \n \
-                compared to sub_dict_schema, see config.py.\n", v.error)
+            if len(list(filter(lambda x: type(x) != np.ndarray, sub_dict["datafinalLow"]["trial"][:]))) != 0:
+                raise TypeError("sub_dict['datafinalLow']['trial'] should be an np.ndarray of dtype float")
+                
+            if not isinstance(sub_dict["datafinalLow"]["trialinfo"][:, 0], np.ndarray) or sub_dict["datafinalLow"]["trialinfo"][:, 0].dtype != np.int32:
+                raise TypeError('sub_dict["datafinalLow"]["trialinfo"][:, 0] should be an np.ndarray of dtype int')
             
-            else:
+            if not isinstance(sub_dict["datafinalLow"]["fsample"], float):
+                raise TypeError(f'datafinalLow"]["fsample"] should be of type float')
+            
+            if not isinstance(sub_dict["datafinalLow"]["label"], list) or not all(isinstance(entery, str) for entery in sub_dict["datafinalLow"]["label"]):
+                raise TypeError(f'sub_dict["datafinalLow"]["label"] should be a list of strings')
 
-                if sub_dict["data"]["trial"].shape != (config.trial_number, config.channels_number, config.time_points):
-                    raise ValueError("Shape of sub_dict['data']['trial'] is incorrect, should be: \n \
-                           (trial_number, channels_number, time_points) \n \
-                          see config.py")
-                
-                if len(sub_dict["data"]["trialinfo"][:, 0]) != config.trial_number:
-                    raise ValueError('Length of sub_dict["data"]["trialinfo"][:, 0] is incorrect,\n \
-                          should be: (trial_number) , see config.py.')
-                
-                if len(sub_dict["data"]["trial"]) != len(sub_dict["data"]["trialinfo"][:, 0]):
-                    raise ValueError('sub_dict["data"]["trial"] and sub_dict["data"]["trialinfo"] mismatch in first dimension, \n \
-                          should have matching number of trials')
-                
-                if  sub_dict["data"]["label"].ndim != 1 or len(sub_dict.get("data").get("label")) != config.channels_number:
-                    raise ValueError('Dimension or length of sub_dict["data"]["label"] is incorrect, \n \
-                          should be 1D array in the length of channels_number, see config.py')
+            if np.array(sub_dict["datafinalLow"]["trial"]).shape != (config.trial_number, config.channels_number, config.time_points):
+                raise ValueError("Shape of sub_dict['datafinalLow']['trial'] is incorrect, should be: \n (trial_number, channels_number, time_points) \n see config.py")
+            
+            if len(sub_dict["datafinalLow"]["trialinfo"][:, 0]) != config.trial_number:
+                raise ValueError('Length of sub_dict["datafinalLow"]["trialinfo"][:, 0] is incorrect,\n should be: (trial_number) , see config.py.')
+            
+            if len(sub_dict["datafinalLow"]["trial"]) != len(sub_dict["datafinalLow"]["trialinfo"][:, 0]):
+                raise ValueError(f'sub_dict["datafinalLow"]["trial"] and sub_dict["datafinalLow"]["trialinfo"] mismatch in first dimension, \n should have matching number of trials')
+            
+            if np.array(sub_dict["datafinalLow"]["label"]).ndim != 1 or len(sub_dict.get("datafinalLow").get("label")) != config.channels_number:
+                raise ValueError(f'Dimension or length of sub_dict["datafinalLow"]["label"] is incorrect, \n should be 1D array in the length of channels_number, see config.py')
 
 def validate_input_convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info):        
     
@@ -191,7 +181,6 @@ def validate_input_convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info):
 
 def validate_input_convert_mat_to_epochs(file_name: os.PathLike, info = None):
     
-    v = Validator(config.sub_dict_schema)
 
     if not isinstance(file_name,(str,os.PathLike)):
         raise TypeError("file_name should be a directory to a mat file in str or PathLike format, input from another type was given")

@@ -40,7 +40,7 @@ def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: 
     else:
         try:
             old_event_ids = list(old_event_ids.keys())
-            num_keys_combined = len(old_event_ids)/len(new_event_ids)
+            num_keys_combined = int(len(old_event_ids)/len(new_event_ids))
 
             # goes through new event_ids and assignes a new event id for every triplet of old event ids and returns a new epochs array with combined
             # event ids
