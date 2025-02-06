@@ -94,16 +94,3 @@ def get_tfr_contrast_path(con1, con2):
 
 psd_path = "psd.h5"
 
-# sub_dict_schema = {
-#         'data': {'type': 'dict', 
-                
-#                 'schema':
-
-#                     {
-#                     'trial':{'type': 'ndarray', 'dtype': 'float'},
-#                     'trialinfo':{'type': 'ndarray', 'dtype': 'int'},
-#                     'label':{'type': 'list', 'schema': {'type':'string'}},
-#                     'fsample':{'type': 'float'}
-#                     }
-#                 }
-#         }

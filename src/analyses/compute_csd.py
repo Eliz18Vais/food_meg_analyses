@@ -2,7 +2,7 @@ import numpy as np
 import mne
 
 
-def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: list, time_range: tuple) \
+def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: list, time_range: tuple, is_base_line=False) \
     -> tuple[mne.time_frequency.CrossSpectralDensity|None, mne.time_frequency.CrossSpectralDensity|None]:
     """
     Recieves:
@@ -23,6 +23,8 @@ def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: lis
     from src import  config
     from mne.time_frequency import csd_morlet
     from tests import input_validation
+    import warnings
+    warnings.simplefilter('ignore')
 
     try:
         input_validation.validation_func['compute_csd'](epochs_instance, condition, freq_bands, time_range)
@@ -54,6 +56,8 @@ def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: lis
             # average csds over frequency bands, each frequency band is a tuple (f[0], f[1])
             csd_mean = csd.mean([f[0] for f in freq_bands], [f[1] for f in freq_bands])
 
+            if is_base_line==True:
+                condition = 'baseline'
             # save original and mean csd:
             csd.save(config.get_csd_path(condition)) 
             csd_mean.save(config.get_csd_mean_path(condition))

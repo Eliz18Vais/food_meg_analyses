@@ -46,8 +46,8 @@ def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: 
             # event ids
             for i in np.arange(len(new_event_ids)):
                 epochs_combined = mne.epochs.combine_event_ids(epochs, 
-                old_event_ids[num_keys_combined*i:num_keys_combined*i+num_keys_combined] , 
-                {list(new_event_ids.keys())[i]: list(new_event_ids.values())[i]}, copy=True)
+                old_event_ids[(num_keys_combined*i):(num_keys_combined*i+num_keys_combined)] , 
+                {list(new_event_ids.keys())[i]: list(new_event_ids.values())[i]}, copy=False)
 
             epochs_combined.save(config.epochs_combined_path, overwrite = True)
         

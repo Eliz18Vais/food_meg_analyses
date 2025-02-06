@@ -55,7 +55,7 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
 
             # Compute TFR
             try:
-                tfr_contrast = evo_contrast.compute_tfr(method='morlet', tmin=config.baseline_time[0], tmax=config.post_stim_time[1], freqs=freqs)
+                tfr_contrast = evo_contrast.compute_tfr(method='multitaper', tmin=config.baseline_time[0], tmax=config.post_stim_time[1], freqs=freqs)
 
                 tfr_contrast.save(config.get_tfr_contrast_path(con1, con2))
                 traceback.print_exc()
@@ -76,10 +76,11 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
     return tfr_contrast
 
 
-def psd(evoked_instance: mne.evoked.Evoked)-> mne.time_frequency.Spectrum:
+def compute_psd(evoked_instance: mne.evoked.Evoked, fmin: float, fmax: float, tmin: float, tmax: float, picks: str)-> mne.time_frequency.Spectrum:
     from src import config
     import traceback
-    
+
+
     try:
         if not isinstance(evoked_instance, mne.evoked.Evoked):
             raise TypeError("evoked_instance should be an mne.evoked.Evoked instance, wrong input type was given.")
@@ -90,7 +91,7 @@ def psd(evoked_instance: mne.evoked.Evoked)-> mne.time_frequency.Spectrum:
     else:
         try:
 
-            psd = evoked_instance.compute_psd(method='morlet', fmin=2, fmax=30, tmin=config.baseline_time[0], tmax=config.post_stim_time[1], picks=['meg'])
+            psd = evoked_instance.compute_psd(method='morlet', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
             psd.save(config.psd_path)
 
         except Exception as e:

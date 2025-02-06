@@ -23,7 +23,7 @@ def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, 
     elif all(len(item) != 2 for item in freq_bands):
         raise ValueError("Value: freq_bands should be a list of 2 entry tuples with numeric entries.")
     
-    elif not all(isinstance([item[0], item[1]], numbers.Real) for item in freq_bands):
+    elif not all(issubclass(type(item[0]), numbers.Real) and issubclass(type(item[1]), numbers.Real) for item in freq_bands):
         raise TypeError("TypeError: freq_bands should be a list of 2 entry tuples with numeric entries.")
     
     elif not all(item[0]<item[1] for item in freq_bands):
@@ -36,7 +36,7 @@ def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, 
     elif len(time_range) != 2:
         raise ValueError("time_range should be a tuple with two entries")
     
-    elif max(time_range) > max(config.post_stim_time) or min(time_range) > min(config.baseline_time):
+    elif max(time_range) > max(config.post_stim_time) or min(time_range) < min(config.baseline_time):
         raise ValueError(f"maximum and minimum of time_range can't extend the timerange of epochs:{config.baseline_time}-{config.post_stim_time}. See config.py and convert_dict_to_epochs function.")
 
 def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple, con2: tuple):
@@ -59,7 +59,7 @@ def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarr
     elif len(con1) != 2 or len(con2) != 2:
         raise ValueError(f"con1 and con2 should be tuples in length 2. \n ")
     
-    elif not isinstance(con1[0], str) or not isinstance(con2[0]):
+    elif not isinstance(con1[0], str) or not isinstance(con2[0], str):
         raise TypeError(f"First entry in con1 and con2 tuples should be a string, wrong input type was given. \n")
     
     elif len(con1[0])==0 or len(con2[0])==0:
