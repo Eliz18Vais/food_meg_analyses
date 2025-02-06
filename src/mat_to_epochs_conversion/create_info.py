@@ -1,4 +1,9 @@
 import os, mne
+from tests import output_tests
+import traceback, glob
+from src import config
+
+
 # in case a raw object exists:
 def extract_raw_info(folder_directory: os.PathLike) -> mne.Info|None:
     """
@@ -13,8 +18,6 @@ def extract_raw_info(folder_directory: os.PathLike) -> mne.Info|None:
     * mne.Info instance
 
     """
-    import traceback, glob
-    from src import config
 
     try:
         if not isinstance(folder_directory, (str, os.PathLike)):

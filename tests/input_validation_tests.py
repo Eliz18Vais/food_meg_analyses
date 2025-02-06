@@ -5,7 +5,7 @@ from src import config
 import os
 import numbers
 
-def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: list, time_range: tuple):
+def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: list, time_range: tuple):
 
     if not isinstance(epochs_instance, mne.EpochsArray):
         raise TypeError("TypeError: epochs_instance should be of type mne.EpochsArray")
@@ -39,7 +39,7 @@ def validate_input_compute_csd(epochs_instance: mne.EpochsArray, condition:str, 
     elif max(time_range) > max(config.post_stim_time) or min(time_range) < min(config.baseline_time):
         raise ValueError(f"maximum and minimum of time_range can't extend the timerange of epochs:{config.baseline_time}-{config.post_stim_time}. See config.py and convert_dict_to_epochs function.")
 
-def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple, con2: tuple):
+def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple, con2: tuple):
     
     if not isinstance(epochs, mne.EpochsArray):
         raise TypeError(f"epochs shpould be an mne.EpochsArray instance, an input  from another type was given. \n")
@@ -77,7 +77,7 @@ def validate_input_compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarr
     elif not set(con1[1]).issubset(epochs.event_id.keys()) or  not set(con2[1]).issubset(epochs.event_id.keys()):
         raise ValueError("con1[1] and con2[1] should be lists with names of keys contained in epochs. \n con1[1] or con2[1] strings are not in epochs.event_id.keys()")
 
-def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, _new_event_ids: dict):
+def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, _new_event_ids: dict):
         
         # search for input type errors
         if not isinstance(epochs, mne.EpochsArray):
@@ -106,7 +106,7 @@ def validate_input_combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, 
                     the function takes every (# old_event_id / # new_event_ids) old event ids
                     and combines them to a single new event id""")
 
-def validate_input_create_events_for_epochs(events_code: np.ndarray):
+def create_events_for_epochs(events_code: np.ndarray):
         
         if not isinstance(events_code, np.ndarray):
              raise TypeError("events_code should be an np.ndarray, got an input from anoter type")
@@ -119,7 +119,7 @@ def validate_input_create_events_for_epochs(events_code: np.ndarray):
         elif events_code.ndim != 1:
             raise ValueError("events_code should be a 1D numpy array, an incorrect input dimension was given")
 
-def validate_input_remove_oddball_trials(data: np.ndarray, events_code: np.ndarray, oddball_id: int):
+def remove_oddball_trials(data: np.ndarray, events_code: np.ndarray, oddball_id: int):
             
     if not isinstance(data, np.ndarray):
         raise TypeError("data should be an np.ndarray, another input type was given")
@@ -140,7 +140,7 @@ def validate_input_remove_oddball_trials(data: np.ndarray, events_code: np.ndarr
     if np.where(events_code == oddball_id)[0].size == 0:
         raise ValueError(f"{oddball_id} was not found in events_cpde, no oddball to remove")
             
-def validate_input_extract_from_dict(sub_dict: dict):
+def extract_from_dict(sub_dict: dict):
     #validate input type:
         if not isinstance(sub_dict, dict):
             raise TypeError("sub_dict should be a dictionary, another input type was recieved")
@@ -171,7 +171,7 @@ def validate_input_extract_from_dict(sub_dict: dict):
             if np.array(sub_dict["datafinalLow"]["label"]).ndim != 1 or len(sub_dict.get("datafinalLow").get("label")) != config.channels_number:
                 raise ValueError(f'Dimension or length of sub_dict["datafinalLow"]["label"] is incorrect, \n should be 1D array in the length of channels_number, see config.py')
 
-def validate_input_convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info):        
+def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info):        
     
     if not isinstance(sub_dict, dict):
         raise TypeError("sub_dict should be a dictionary, another input type was given")
@@ -179,8 +179,7 @@ def validate_input_convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info):
     if not isinstance(mne_info, mne.Info):
         raise TypeError("mne_info should be an mne.Info, another input type was given")
 
-def validate_input_convert_mat_to_epochs(file_name: os.PathLike, info = None):
-    
+def convert_mat_to_epochs(file_name: os.PathLike, info: mne.Info | None):
 
     if not isinstance(file_name,(str,os.PathLike)):
         raise TypeError("file_name should be a directory to a mat file in str or PathLike format, input from another type was given")
@@ -189,7 +188,3 @@ def validate_input_convert_mat_to_epochs(file_name: os.PathLike, info = None):
         raise TypeError("info should be an mne.Info instance, input of another type was given")
 
 
-validation_func = {'compute_csd': validate_input_compute_csd, 'compute_tfr_contrast': validate_input_compute_tfr_contrast, 
-                   'combine_epochs': validate_input_combine_epochs, 'create_events_for_epochs': validate_input_create_events_for_epochs,
-                   'remove_oddball_trials':validate_input_remove_oddball_trials, 'extract_from_dict': validate_input_extract_from_dict,
-                   'convert_dict_to_epochs': validate_input_convert_dict_to_epochs, 'convert_mat_to_epochs':validate_input_convert_mat_to_epochs}

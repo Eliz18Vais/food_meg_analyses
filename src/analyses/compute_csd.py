@@ -22,12 +22,12 @@ def compute_csd(epochs_instance: mne.EpochsArray, condition:str, freq_bands: lis
     import traceback
     from src import  config
     from mne.time_frequency import csd_morlet
-    from tests import input_validation
+    from tests import input_validation_tests
     import warnings
     warnings.simplefilter('ignore')
 
     try:
-        input_validation.validation_func['compute_csd'](epochs_instance, condition, freq_bands, time_range)
+        input_validation_tests.compute_csd(epochs_instance, condition, freq_bands, time_range)
 
     except Exception as e:
         print("An error occured:", e)

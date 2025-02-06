@@ -43,7 +43,9 @@ dependencies = [
 "six>=1.17.0",
 "tqdm>=4.67.1",
 "urllib3>=2.3.0",
-"xmltodict>=0.14.2"
+"xmltodict>=0.14.2",
+"typeguard==4.4.1",
+"typing_extensions==4.12.2"
 ]
 
 [project.optional-dependencies]
@@ -60,8 +62,6 @@ test = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "pytest-html==4.1.1",
-    "typeguard==4.4.1",
-    "typing_extensions==4.12.2"
 ]
 build = [
     "build>=1.2.2",

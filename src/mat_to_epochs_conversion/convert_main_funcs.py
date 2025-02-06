@@ -49,7 +49,6 @@ def convert_mat_to_dict(file_name: str|os.PathLike) -> dict|None:
         dict_from_mat = None
     return dict_from_mat
 
-
 def extract_from_dict(sub_dict: dict) -> tuple[np.ndarray|None, np.ndarray|None, list[str]|None, float|None]:
 
     """
@@ -69,12 +68,12 @@ def extract_from_dict(sub_dict: dict) -> tuple[np.ndarray|None, np.ndarray|None,
 
      """
     
-    from tests import input_validation
+    from tests import input_validation_tests
     import traceback
 
     try:
         
-        input_validation.validation_func['extract_from_dict'](sub_dict)
+        input_validation_tests.extract_from_dict(sub_dict)
 
     except ValueError as e:
         print("An error occured:")
@@ -111,7 +110,6 @@ def extract_from_dict(sub_dict: dict) -> tuple[np.ndarray|None, np.ndarray|None,
 
     return data, events_code, ch_names, sfreq
 
-
 def remove_oddball_trials(data: np.ndarray, events_code: np.ndarray, oddball_id: int) -> tuple[np.ndarray|None, np.ndarray|None]:
 
     """ 
@@ -129,11 +127,11 @@ def remove_oddball_trials(data: np.ndarray, events_code: np.ndarray, oddball_id:
     * events_code: numpy ndarray of type int, shape (1, trials), after oddball id removal.
     
     """
-    from tests import input_validation
+    from tests import input_validation_tests
     import traceback
 
     try:
-        input_validation.validation_func['remove_oddball_trials'](data, events_code, oddball_id)
+        input_validation_tests.remove_oddball_trials(data, events_code, oddball_id)
 
     except Exception as e:
         print("An error occured:", e)
@@ -183,12 +181,12 @@ def create_events_for_epochs(events_code: np.ndarray) -> np.ndarray|None:
 
     """
 
-    from tests import input_validation
+    from tests import input_validation_tests
     import traceback
 
     try:
 
-        input_validation.validation_func['create_events_for_epochs'](events_code)
+        input_validation_tests.create_events_for_epochs(events_code)
         
 
     except Exception as e:
@@ -230,12 +228,12 @@ def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info) -> tuple[mne.Epoc
 
     """
     from src import config
-    from tests import input_validation
+    from tests import input_validation_tests
     import traceback
 
     try:
 
-        input_validation.validation_func['convert_dict_to_epochs'](sub_dict, mne_info)
+        input_validation_tests.convert_dict_to_epochs(sub_dict, mne_info)
         
 
     except Exception as e:
@@ -283,7 +281,6 @@ def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info) -> tuple[mne.Epoc
         evoked = None
     return epochs, evoked   
 
-
 def convert_mat_to_epochs(file_name: os.PathLike, info = None) -> tuple[mne.EpochsArray|None, mne.evoked.Evoked|None]:
 
     """
@@ -302,11 +299,11 @@ def convert_mat_to_epochs(file_name: os.PathLike, info = None) -> tuple[mne.Epoc
     from src import config
     from mat_to_epochs_conversion import create_info
     import traceback
-    from tests import input_validation
+    from tests import input_validation_tests
     
     try: 
 
-        input_validation.validation_func['convert_mat_to_epochs'](file_name, info)
+        input_validation_tests.convert_mat_to_epochs(file_name, info)
         
     except Exception as e:
         print("An error occured:", e)

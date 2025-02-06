@@ -1,4 +1,8 @@
 import mne
+import traceback
+import numpy as np
+from src import config
+from tests import input_validation_tests
 
 def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: dict)-> mne.EpochsArray|None:
     """
@@ -20,17 +24,11 @@ def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: 
     * A specific order of the conditions in old_event_ids and new_even_ids is required.
     """
 
-    import mne
-    import traceback
-    import numpy as np
-    from src import config
-    from tests import input_validation
-
     epochs_combined = None
 
     try:
 
-        input_validation.validation_func["combine_epochs"](epochs, old_event_ids, new_event_ids)
+        input_validation_tests.combine_epochs(epochs, old_event_ids, new_event_ids)
         
 
     except Exception as e:

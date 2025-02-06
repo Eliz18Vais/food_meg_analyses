@@ -24,12 +24,12 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
     """
     import traceback
     from src import config
-    from tests import input_validation
+    from tests import input_validation_tests
 
     # input handling
     try:
 
-        input_validation.validation_func['compute_tfr_contrast'](epochs, freqs, con1, con2)
+        input_validation_tests.compute_tfr_contrast(epochs, freqs, con1, con2)
 
     except Exception as e:
         print("An error occured:", e)
@@ -75,8 +75,7 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
         tfr_contrast = None
     return tfr_contrast
 
-
-def compute_psd(evoked_instance: mne.evoked.Evoked, fmin: float, fmax: float, tmin: float, tmax: float, picks: str)-> mne.time_frequency.Spectrum:
+def compute_psd(evoked_instance: mne.Evoked, fmin: float, fmax: float, tmin: float, tmax: float, picks: str)-> mne.time_frequency.Spectrum:
     from src import config
     import traceback
 
