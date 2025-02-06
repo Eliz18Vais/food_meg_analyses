@@ -11,31 +11,26 @@ Subjects foldes must contain only one mat file that contains the epoched data an
 
 if __name__ == "__main__":
 
-    from typeguard import install_import_hook
-    
-    install_import_hook()
-
-    import numpy as np
-    import numbers
-    import os
-    import mne
-    import glob
-    import warnings
-    from mne.time_frequency import csd_morlet, read_spectrum, read_csd, read_tfrs
-    import traceback
-    from pymatreader import read_mat
-    from src import config
-    from mat_to_epochs_conversion import convert_main_funcs, combine_epochs, create_info # using * didn't work for some reason
-    from analyses import *
     import sys
-    import add_to_report
-    from tests import output_tests
-
+    
     package_path = "C:/Projects/food_meg_analyses" 
     
     if package_path not in sys.path:
         sys.path.insert(0, package_path)
+
+    import numpy as np
+    import os, mne, glob, warnings, traceback
+    from mne.time_frequency import csd_morlet, read_spectrum, read_csd, read_tfrs
+    from pymatreader import read_mat
+    from src import config
+    from mat_to_epochs_conversion import convert_main_funcs, combine_epochs, create_info # using * didn't work for some reason
+    from analyses import *
+    import add_to_report
+    from tests import output_tests, input_validation_tests
    
+    from typeguard import install_import_hook
+    
+    install_import_hook()
 
     # in case one of the modules is not installed or can not be found by python using the system variables:
     # except Exception as e:

@@ -1,14 +1,13 @@
 import runpy
 import pytest
 import mne
-from src import config
 import os
 
 def test_main_outputs():
 
     global globals_dict
 
-    globals_dict = runpy.run_path('__main__.py')
+    globals_dict = runpy.run_path('./src/__main__.py')
  
 
     variables_to_test = ['subject_num', 'report', 'raw_info', 'epochs',

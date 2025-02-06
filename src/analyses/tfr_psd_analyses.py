@@ -79,23 +79,14 @@ def compute_psd(evoked_instance: mne.Evoked, fmin: float, fmax: float, tmin: flo
     from src import config
     import traceback
 
-
     try:
-        if not isinstance(evoked_instance, mne.evoked.Evoked):
-            raise TypeError("evoked_instance should be an mne.evoked.Evoked instance, wrong input type was given.")
-        
-    except TypeError as e:
+
+        psd = evoked_instance.compute_psd(method='morlet', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
+        psd.save(config.psd_path)
+
+    except Exception as e:
         print("An error occured:", e)
-
-    else:
-        try:
-
-            psd = evoked_instance.compute_psd(method='morlet', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
-            psd.save(config.psd_path)
-
-        except Exception as e:
-            print("An error occured:", e)
-            traceback.print_exc()
+        traceback.print_exc()
 
 
     if 'psd' not in locals():

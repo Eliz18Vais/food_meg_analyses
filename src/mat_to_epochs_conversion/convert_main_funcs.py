@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import mne
+from tests import input_validation_tests
 
 def convert_mat_to_dict(file_name: str|os.PathLike) -> dict|None:
     """
@@ -22,23 +23,17 @@ def convert_mat_to_dict(file_name: str|os.PathLike) -> dict|None:
     from pymatreader import read_mat
 
     try:
-        #validate input type:
-        if not isinstance(file_name, (str, os.PathLike)):
-            raise TypeError("file_name should be a directory to a mat file in str or PathLike format, input from another type was given")
+        input_validation_tests.file_exists(file_name) 
 
     except Exception as e:
-         print("An error occured:", e)
-         traceback.print_exc()
-    
-    else:
-            
-        try:
-            if os.path.exists(file_name):
-                # using read_mat from pymatreader module, convert a v. 7.3 mat file to a dictionary
-                dict_from_mat = read_mat(file_name)
+        print("An error occured:", e)
+        traceback.print_exc()
 
-            else:
-                raise FileNotFoundError()
+    else:
+
+        try:    
+            # using read_mat from pymatreader module, convert a v. 7.3 mat file to a dictionary
+            dict_from_mat = read_mat(file_name)
 
         except Exception as e:
             print("An error occured:", e)
@@ -73,7 +68,7 @@ def extract_from_dict(sub_dict: dict) -> tuple[np.ndarray|None, np.ndarray|None,
 
     try:
         
-        input_validation_tests.extract_from_dict(sub_dict)
+        input_validation_tests.sub_dict(sub_dict)
 
     except ValueError as e:
         print("An error occured:")
@@ -233,7 +228,7 @@ def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info) -> tuple[mne.Epoc
 
     try:
 
-        input_validation_tests.convert_dict_to_epochs(sub_dict, mne_info)
+        input_validation_tests.sub_dict(sub_dict)
         
 
     except Exception as e:
@@ -303,39 +298,27 @@ def convert_mat_to_epochs(file_name: os.PathLike, info = None) -> tuple[mne.Epoc
     
     try: 
 
-        input_validation_tests.convert_mat_to_epochs(file_name, info)
+        input_validation_tests.file_exists(file_name)
         
     except Exception as e:
         print("An error occured:", e)
         traceback.print_exc()
-
+    
     else:
 
         try:
+            sub_dict = convert_mat_to_dict(file_name)
 
-            if not os.path.exists(file_name):
-                raise FileNotFoundError(f"The file: {file_name}, doesn't exist.")
-            
+            if info is None:
+                mne_info = create_info.create_mne_info(sub_dict)
+            else:
+                mne_info = info 
+
+            epochs, evoked = convert_dict_to_epochs(sub_dict, mne_info)
 
         except Exception as e:
             print("An error occured:", e)
             traceback.print_exc()
-
-        else: 
-
-            try:
-                sub_dict = convert_mat_to_dict(file_name)
-
-                if info is None:
-                    mne_info = create_info.create_mne_info(sub_dict)
-                else:
-                    mne_info = info 
-
-                epochs, evoked = convert_dict_to_epochs(sub_dict, mne_info)
-
-            except Exception as e:
-                print("An error occured:", e)
-                traceback.print_exc()
             
     
     #returns epochs and evoked, if doesn't exist due to exception, return None

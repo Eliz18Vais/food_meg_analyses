@@ -2,10 +2,11 @@ import os, mne
 from tests import output_tests
 import traceback, glob
 from src import config
+from tests import input_validation_tests
 
 
 # in case a raw object exists:
-def extract_raw_info(folder_directory: os.PathLike) -> mne.Info|None:
+def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info|None:
     """
 
     Recieves:
@@ -18,44 +19,32 @@ def extract_raw_info(folder_directory: os.PathLike) -> mne.Info|None:
     * mne.Info instance
 
     """
-
     try:
-        if not isinstance(folder_directory, (str, os.PathLike)):
-            raise TypeError("folder_directory should be a directory in a str or PathLike format containing raw MEG bti file, \n \
-                 input from another type was given")
+        
+        input_validation_tests.file_exists(folder_directory)
 
-    except TypeError as e:
-        print("Type Error:", e)
+        # redirect to the folder
+        os.chdir(folder_directory) 
+
+        # glob.glob returns a list of the paths with the desired pattern, return the first and only object in the list
+        raw_path = glob.glob(f"*1Hz")[0] 
+
+        print(raw_path)
+
+        # read raw object
+        raw = mne.io.read_raw_bti(raw_path, rename_channels=False)
+
+        # drop all bad channels and reference channels (leaves 246 channels)
+        raw.drop_channels(config.bad_ch_names)
+        
+        # extracts only info from raw object
+        raw_info = raw.info
+            
+            
+    except Exception as e:
+        print("An error occured:", e)
         traceback.print_exc()
 
-
-    else:
-        try:
-            if os.path.exists(folder_directory):
-                # redirect to the folder
-                os.chdir(folder_directory) 
-
-                # glob.glob returns a list of the paths with the desired pattern, return the first and only object in the list
-                raw_path = glob.glob(f"*1Hz")[0] 
-
-                print(raw_path)
-
-                # read raw object
-                raw = mne.io.read_raw_bti(raw_path, rename_channels=False)
-
-                # drop all bad channels and reference channels (leaves 246 channels)
-                raw.drop_channels(config.bad_ch_names)
-                
-                # extracts only info from raw object
-                raw_info = raw.info
-            
-            else: 
-                raise FileNotFoundError(f"Directory {folder_directory} doesn't exist.")
-            
-        except Exception as e:
-            print("An error occured:", e)
-            traceback.print_exc()
-    
     #returns raw_info, if doesn't exist due to exception, return an empty dictionary
     if 'raw_info' not in locals():
         raw_info = None
@@ -83,9 +72,8 @@ def create_mne_info(sub_dict: dict) -> mne.Info|None:
     import traceback
 
     try:
-        #validate input type:
-        if not isinstance(sub_dict, dict):
-            raise TypeError("sub_dict should be a dictionary, another input type was recieved")
+       
+       input_validation_tests.sub_dict(sub_dict)
     
     except Exception as e:
         print("An error has occured:", e)

@@ -7,7 +7,7 @@ def test_subject_num(subject_num: str):
     assert fnmatch.fnmatch(subject_num, "subject_*")
 
 def test_raw_info(raw_info: mne.Info):
-    assert 'loc' in raw_info
+    assert len(raw_info['chs'][0]['loc']) != 0
 
 def test_epochs_combined(epochs_combined: mne.EpochsArray):   
     assert epochs_combined.event_id.keys() == config.new_event_ids.keys()
