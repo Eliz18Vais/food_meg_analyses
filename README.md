@@ -18,34 +18,38 @@ For two participants from the 42 in the study (could be implemented for more  pa
 The data plus html reports with results for the two participants can be found in the link: https://drive.google.com/drive/folders/1tZth2oi_OlHLtsFPGPjzpmj2g7FsJbw_?usp=sharing
 
 ### Repository Structure:
-
+'''
 project folder
-    src
-        analyses
-            init.py
-            compute_csd.py
-            tfr_psd_analyses.py
-        mat_to_epochs_conversion
-            init.py
-            combine_epochs.py
-            convert_main_funcs.py
-            create_events_for_epochs.py
-            create_info.py
-            extract_from_dict.py
-            remove_oddball_trials.py
-    init.py
-    main.py
-    add_to_report.py
-    config.py
-    tests
-        init.py
+│   .gitignore
+│   pyproject.toml
+│   README.md
+│   __init__.py
+│
+├───src
+│   │   add_to_report.py
+│   │   config.py
+│   │   __init__.py
+│   │   __main__.py
+│   │
+│   ├───analyses
+│   │       compute_csd.py
+│   │       tfr_psd_analyses.py
+│   │       __init__.py
+│   │
+│   └───mat_to_epochs_conversion
+│           combine_epochs.py
+│           convert_main_funcs.py
+│           create_events_for_epochs.py
+│           create_info.py
+│           extract_from_dict.py
+│           remove_oddball_trials.py
+│           __init__.py
+│
+└───tests
         input_validation_tests.py
         output_tests.py
-    init.py
-    .gitignore
-    pyproject.toml
-    README.md
-
+        __init__.py
+'''
 
 ### Implementation Steps:
 1. Data conversion from epoched data saved in mat files to mne.EpochsArray using the modules in “mat_to_epochs_conversion” package.
