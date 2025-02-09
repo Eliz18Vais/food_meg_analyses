@@ -18,7 +18,7 @@ For two participants from the 42 in the study (could be implemented for more  pa
 The data plus html reports with results for the two participants can be found in the link: https://drive.google.com/drive/folders/1tZth2oi_OlHLtsFPGPjzpmj2g7FsJbw_?usp=sharing
 
 ### Repository Structure:
-'''
+<pre>
 project folder
 │   .gitignore
 │   pyproject.toml
@@ -49,7 +49,7 @@ project folder
         input_validation_tests.py
         output_tests.py
         __init__.py
-'''
+</pre>
 
 ### Implementation Steps:
 1. Data conversion from epoched data saved in mat files to mne.EpochsArray using the modules in “mat_to_epochs_conversion” package.
