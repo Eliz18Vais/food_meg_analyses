@@ -76,8 +76,6 @@ evoked_path = "evo.fif"
 
 psd_path = "psd.h5"
 
-psd_baselined_path = "psd_baselined.h5"
-
 def get_tfr_contrast_path(con1, con2):
     evoked_tfr_contrast_path = f"evoked_tfr_{con1[0]}-{con2[0]}.h5"
     return evoked_tfr_contrast_path
@@ -95,7 +93,7 @@ def get_csd_mean_path(condition):
 def get_report_titles(condition=None, contrast=None, fmin=None, fmax=None, tmin=None, tmax=None):
     report_titles = {'csd': f"CSD matrices for {condition}", 'csd_mean': f"CSD mean matrices for {condition}", 'coherence': f"Coherence mean matrices for {condition}", 
                     'tfr_contrast': f'Time-frequency representation for{contrast}', 'general_topoplots':f"across time topo-plots averaged for all conditions", 'gfp': f"Global Field Power",
-                    'psd': 'Power Spectral Density for Evoked', 'psd_baselined': 'Power Spectral Density for Evoked with Baseline Power Subtaction', 'tfr_contrast_topoplots':f"TFR Contrast Topoplot({contrast}, {fmin}-{fmax}Hz, {tmin}-{tmax}s)"}
+                    'psd': 'Power Spectral Density for Evoked', 'tfr_contrast_topoplots':f"TFR Contrast Topoplot({contrast}, {fmin}-{fmax}Hz, {tmin}-{tmax}s)"}
     return report_titles
 
 def get_report_sections(subject_num):

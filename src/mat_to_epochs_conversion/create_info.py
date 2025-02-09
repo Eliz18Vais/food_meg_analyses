@@ -17,7 +17,7 @@ def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info:
     * reads and extracts info from raw MEG bti recording
 
     Returns:
-    * mne.Info instance
+    * raw_info: mne.Info instance
 
     """
     try:
@@ -61,7 +61,7 @@ def create_mne_info(sub_dict: dict) -> mne.Info:
     * Creates a manual mne.Info instance with info: channel names, channel_types, sampling frequency
 
     Returns:
-    * mne_info: an instance of mne.Info object, or an empty dictionary in case of an exception.
+    * mne_info: mne.Info instance
 
     """
 

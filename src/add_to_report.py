@@ -11,15 +11,13 @@ def add_to_report(report: mne.Report, subject_num: str):
 
 
     epochs_combined = mne.read_epochs(glob.glob("*combined_epo.fif")[0])
+    
     evoked  = mne.read_evokeds(glob.glob("*evo.fif")[0])[0]
     
     #plot power spectral density (computed for evoked - average of all conditions): 
     psd = read_spectrum(config.psd_path)
-    psd_baselined = read_spectrum(config.psd_baselined_path)
 
     report.add_figure(psd.plot(), title=config.get_report_titles()['psd'], section=config.get_report_sections(subject_num=subject_num)['psd'], replace=True)
-    report.add_figure(psd_baselined.plot(), title=config.get_report_titles()['psd_baselined'], section=config.get_report_sections(subject_num=subject_num)['psd'], replace=True)
-
 
     #plot csds (computed for epochs_combined[condition]):
     for condition in list(epochs_combined.event_id.keys())+ ['baseline']:    

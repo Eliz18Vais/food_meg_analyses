@@ -16,7 +16,7 @@ def convert_mat_to_dict(file_name: str|os.PathLike) -> dict:
     * Converts mat files from v. 7.3 to dictionaries and deals with possible exceptions.
 
     Returns: 
-    * dict_from_mat: dictionary (if conversion was not successful, an exception occured, dict_from_mat = None)
+    * dict_from_mat: dictionary 
 
     Notes:
     * For the following code to work the mat file should include epoched data.
@@ -42,9 +42,6 @@ def convert_mat_to_dict(file_name: str|os.PathLike) -> dict:
             print("An error occured:", e)
             traceback.print_exc()
             
-    # #returns dict_mat, if dict_mat doesn't exist (fail in conversion), return None
-    # if 'dict_from_mat' not in locals(): 
-    #     dict_from_mat = None
     return dict_from_mat
 
 
@@ -70,50 +67,50 @@ def convert_dict_to_epochs(sub_dict: dict, mne_info: mne.Info) -> tuple[mne.Epoc
     from tests import input_validation_tests
     import traceback
 
-    try:
+    # try:
 
-        input_validation_tests.sub_dict(sub_dict)
+    #     input_validation_tests.sub_dict(sub_dict)
         
 
+    # except Exception as e:
+    #     print("An error occured:", e)
+    #     traceback.print_exc()
+
+
+    try:      
+        # variables imported from config.py:
+
+        tmin = config.baseline_time[0] # starting point of baseline (-0.3 in our case) 
+
+        baseline = config.baseline_time # tuple for baseline time (-0.3,0)
+
+        oddball_id = config.oddball_id # int of code for oddball stimulus
+
+
+        data, events_code,_,_ = extract_from_dict.extract(sub_dict)
+
+        # Identify and remove oddball trials
+        data, events_code =  remove_oddball_trials.remove(data, events_code, oddball_id)
+
+        events = create_events_for_epochs.create(events_code)
+
+        # Create the epochs instance:
+        epochs = mne.EpochsArray(data, mne_info, events=events, tmin=tmin, event_id=config.event_ids,
+            reject=None, flat=None, reject_tmin=None, reject_tmax=None,
+            baseline=baseline, proj=True, on_missing='raise', metadata=None,
+            selection=None, drop_log=None, raw_sfreq=None, verbose=None)
+        
+        # average epochs to get a general evoked response to all visual stimuli
+        evoked = epochs.average()
+
+                        
+        # save the epochs array and evoked in the current subject's folder:
+        epochs.save(config.epochs_path)
+        evoked.save(config.evoked_path)
+
     except Exception as e:
-        print("An error occured:", e)
+        print(" An error occured:", e)
         traceback.print_exc()
-
-    else:
-        try:      
-            # variables imported from config.py:
-
-            tmin = config.baseline_time[0] # starting point of baseline (-0.3 in our case) 
-
-            baseline = config.baseline_time # tuple for baseline time (-0.3,0)
-
-            oddball_id = config.oddball_id # int of code for oddball stimulus
-
-
-            data, events_code,_,_ = extract_from_dict.extract(sub_dict)
-
-            # Identify and remove oddball trials
-            data, events_code =  remove_oddball_trials.remove(data, events_code, oddball_id)
-
-            events = create_events_for_epochs.create(events_code)
-
-            # Create the epochs instance:
-            epochs = mne.EpochsArray(data, mne_info, events=events, tmin=tmin, event_id=config.event_ids,
-                reject=None, flat=None, reject_tmin=None, reject_tmax=None,
-                baseline=baseline, proj=True, on_missing='raise', metadata=None,
-                selection=None, drop_log=None, raw_sfreq=None, verbose=None)
-            
-            # average epochs to get a general evoked response to all visual stimuli
-            evoked = epochs.average()
-
-                            
-            # save the epochs array and evoked in the current subject's folder:
-            epochs.save(config.epochs_path)
-            evoked.save(config.evoked_path)
-
-        except Exception as e:
-            print(" An error occured:", e)
-            traceback.print_exc()
 
     return epochs, evoked   
 

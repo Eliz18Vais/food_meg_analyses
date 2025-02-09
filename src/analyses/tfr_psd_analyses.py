@@ -98,13 +98,11 @@ def compute_psd(evoked_instance: mne.Evoked, fmin: int, fmax: int, tmin: float, 
 
     try:
 
-        evoked_baselined = evoked_instance.apply_baseline(baseline=config.baseline_time)
 
         psd = evoked_instance.compute_psd(method='multitaper', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
-        psd_baselined = evoked_baselined.compute_psd(method='multitaper', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
 
         psd.save(config.psd_path)
-        psd_baselined.save(config.psd_baselined_path)
+
     except Exception as e:
         print("An error occured:", e)
         traceback.print_exc()

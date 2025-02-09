@@ -100,7 +100,7 @@ if __name__ == "__main__":
                     output_tests.test_tfr(tfr_food, freqs)
 
                     # compute psd (power spectral density) over the desired frequencies, times and channels:
-                    psd =  tfr_psd_analyses.compute_psd(evoked_instance=evoked, fmin=config.freq_bands[0][0], fmax=config.freq_bands[-1][-1], tmin=config.post_stim_time[0], tmax=config.post_stim_time[1], picks='meg')
+                    psd =  tfr_psd_analyses.compute_psd(evoked_instance=evoked, fmin=config.freq_bands[0][0], fmax=config.freq_bands[-1][-1], tmin=config.baseline_time[0], tmax=config.post_stim_time[1], picks='meg')
                     output_tests.test_psd(psd)
 
                     report = mne.Report(title=f"report for {subject_num}")
