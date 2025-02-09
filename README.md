@@ -18,32 +18,33 @@ For two participants from the 42 in the study (could be implemented for more  pa
 The data plus html reports with results for the two participants can be found in the link: https://drive.google.com/drive/folders/1tZth2oi_OlHLtsFPGPjzpmj2g7FsJbw_?usp=sharing
 
 ### Repository Structure:
-- project folder
-    - src
-        - analyses
-            - init.py
-            - compute_csd.py
-            - tfr_psd_analyses.py
-        - mat_to_epochs_conversion
-            - init.py
-            - combine_epochs.py
-            - convert_main_funcs.py
-            - create_events_for_epochs.py
-            - create_info.py
-            - extract_from_dict.py
-            - remove_oddball_trials.py
-    - init.py
-    - main.py
-    - add_to_report.py
-    - config.py
-    - tests
-        - init.py
-        - input_validation_tests.py
-        - output_tests.py
-    - init.py
-    - .gitignore
-    - pyproject.toml
-    - README.md
+
+project folder
+    src
+        analyses
+            init.py
+            compute_csd.py
+            tfr_psd_analyses.py
+        mat_to_epochs_conversion
+            init.py
+            combine_epochs.py
+            convert_main_funcs.py
+            create_events_for_epochs.py
+            create_info.py
+            extract_from_dict.py
+            remove_oddball_trials.py
+    init.py
+    main.py
+    add_to_report.py
+    config.py
+    tests
+        init.py
+        input_validation_tests.py
+        output_tests.py
+    init.py
+    .gitignore
+    pyproject.toml
+    README.md
 
 
 ### Implementation Steps:
@@ -70,7 +71,7 @@ freq_bands, time_frames, event_ids, new_event_ids, contrast combinations, bad_ch
 
 __Note:__ in config.py len(event_ids) should be devisible by len(new_event_ids) with no remanant, being used in combine_epochs to combine every x conditions in event_ids under a single condition in new_event_ids.
 
-Additional Notes: 
+__Additional Notes__: 
 The function create_mne_info in create_info module in “mat_to_epochs_conversion” package is a function for manual creation of mne.Info instance, it is not used in main.py. The function can be used in the lack of a raw 4D recording, but then the topo-plots created using “add_to_report.py” need to be omitted due to lacking sensor locations.
 Those two functions should be deleted from main.py:
 
