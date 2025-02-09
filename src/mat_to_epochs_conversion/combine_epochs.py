@@ -3,8 +3,10 @@ import traceback
 import numpy as np
 from src import config
 from tests import input_validation_tests
+from beartype import beartype
 
-def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: dict)-> mne.EpochsArray|None:
+@beartype
+def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: dict)-> mne.EpochsArray:
     """
     Recieves:
     * epochs: mne epochs array instance
@@ -18,13 +20,13 @@ def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: 
     disregarding the lag (short, medium, long)
 
     Returns:
-    * epochs_combined: mne.EpochsArray instance, with events categorized to the new conditions.
+    * epochs_combined: mne.EpochsArray instance, with events categorized to the new conditions and saves it to the current directory.
 
     Notes: 
     * A specific order of the conditions in old_event_ids and new_even_ids is required.
     """
 
-    epochs_combined = None
+    # epochs_combined = None
 
     try:
 
@@ -40,14 +42,14 @@ def combine_epochs(epochs: mne.EpochsArray, old_event_ids: dict, new_event_ids: 
             old_event_ids = list(old_event_ids.keys())
             num_keys_combined = int(len(old_event_ids)/len(new_event_ids))
 
-            # goes through new event_ids and assignes a new event id for every triplet of old event ids and returns a new epochs array with combined
-            # event ids
+            # goes through new event_ids and assignes a new event id for every num_keys_combined of old_event_ids (every triplet in implementation) and returns a new epochs 
+            # array with the combined event ids
             for i in np.arange(len(new_event_ids)):
                 epochs_combined = mne.epochs.combine_event_ids(epochs, 
                 old_event_ids[(num_keys_combined*i):(num_keys_combined*i+num_keys_combined)] , 
                 {list(new_event_ids.keys())[i]: list(new_event_ids.values())[i]}, copy=False)
 
-            epochs_combined.save(config.epochs_combined_path, overwrite = True)
+            epochs_combined.save(config.epochs_combined_path)
         
         except Exception as e:
             print("An error occured:", e)

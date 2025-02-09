@@ -1,9 +1,14 @@
 import mne
 import numpy as np
+from beartype import beartype
+from numpy.typing import NDArray
+from src import config
+import traceback
+from tests import input_validation_tests
 
-
-def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple, con2: tuple)\
-    -> mne.time_frequency.AverageTFR|None:
+@beartype
+def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: NDArray, con1: tuple, con2: tuple)\
+    -> mne.time_frequency.AverageTFR:
     """
 
     Recieves:
@@ -15,18 +20,15 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
       tuple[1] - a list of str of the name of conditions present in epochs combined under the same new condition -> tuple[0]
     * report: mne.Report instance
 
-    Funtion:
-    * Add plots of Time-Frequency Representation (TFR) of the contrast (con1-con2) between two conditions.
+    Function:
+    * Compute Time-Frequency Representation (TFR) of the contrast (con1-con2) between two conditions and save it to the current directory.
 
     Returns: 
     * Time-Frequency Representation (TFR) for the epochs (con1-con2) contrast.
 
     """
-    import traceback
-    from src import config
-    from tests import input_validation_tests
 
-    # input handling
+    # input testing
     try:
 
         input_validation_tests.compute_tfr_contrast(epochs, freqs, con1, con2)
@@ -51,8 +53,9 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
             info = epochs_con_1.info 
 
             # Create a new Evoked object with the contrast data
+            # Note: baselining is preformed in the spectrum and topo-map plots in add_to_report.py and that's why it's not included here
             evo_contrast = mne.EvokedArray(contrast, info, tmin=epochs_con_1.tmin)
-
+            
             # Compute TFR
             try:
                 tfr_contrast = evo_contrast.compute_tfr(method='multitaper', tmin=config.baseline_time[0], tmax=config.post_stim_time[1], freqs=freqs)
@@ -71,25 +74,40 @@ def compute_tfr_contrast(epochs: mne.EpochsArray, freqs: np.ndarray, con1: tuple
             print("An error occured:", e)
             traceback.print_exc()
         
-    if 'tfr_contrast' not in locals():
-        tfr_contrast = None
     return tfr_contrast
 
-def compute_psd(evoked_instance: mne.Evoked, fmin: float, fmax: float, tmin: float, tmax: float, picks: str)-> mne.time_frequency.Spectrum:
-    from src import config
-    import traceback
+
+@beartype
+def compute_psd(evoked_instance: mne.Evoked, fmin: int, fmax: int, tmin: float, tmax: float, picks: str|list[str])-> mne.time_frequency.Spectrum:
+    """
+    Recieves:
+    * evoked_instance: mne.Evoked object
+    * fmin: float, the minimal frequency for power spectral density computation
+    * fmax: float, the maximal frequency for power spectral density computation
+    * tmin: float, the starting point for power spectral density computation
+    * tmax: float, the end point for power spectral density computation
+    * picks: the type/names of channels to compute psd for.
+
+    Function:
+    * Compute the Power Spectral Density (PSD) for the channels provided in picks and save it to the current directory. 
+
+    Returns: 
+    * The Power Spectral Density for all picked channels.
+
+    """
 
     try:
 
-        psd = evoked_instance.compute_psd(method='morlet', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
-        psd.save(config.psd_path)
+        evoked_baselined = evoked_instance.apply_baseline(baseline=config.baseline_time)
 
+        psd = evoked_instance.compute_psd(method='multitaper', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
+        psd_baselined = evoked_baselined.compute_psd(method='multitaper', fmin=fmin, fmax=fmax, tmin=tmin, tmax=tmax, picks=picks)
+
+        psd.save(config.psd_path)
+        psd_baselined.save(config.psd_baselined_path)
     except Exception as e:
         print("An error occured:", e)
         traceback.print_exc()
 
-
-    if 'psd' not in locals():
-        psd = None
     return psd
 

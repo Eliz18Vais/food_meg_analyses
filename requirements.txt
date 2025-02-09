@@ -1,6 +1,8 @@
 asttokens==3.0.0
+beartype==0.19.0
 build==1.2.2.post1
 cachetools==5.5.1
+Cerberus==1.3.7
 certifi==2025.1.31
 chardet==5.2.0
 charset-normalizer==3.4.1
@@ -14,8 +16,8 @@ decorator==5.1.1
 distlib==0.3.9
 executing==2.2.0
 filelock==3.17.0
-fonttools==4.55.8
-glob2==0.7
+fonttools==4.56.0
+-e git+https://github.com/Eliz18Vais/food_meg_analyses.git@61dced160e286f3908bf0b6ba38c18dab58e18f0#egg=food_meg_analyses
 h5io==0.2.4
 h5py==3.12.1
 idna==3.10
@@ -34,7 +36,6 @@ matplotlib-inline==0.1.7
 mne==1.9.0
 nest-asyncio==1.6.0
 numpy==2.2.2
-p2j==1.3.2
 packaging==24.2
 parso==0.8.4
 pillow==11.1.0
@@ -57,7 +58,7 @@ python-dateutil==2.9.0.post0
 pywin32==308
 pyzmq==26.2.1
 requests==2.32.3
-ruff==0.9.4
+ruff==0.9.5
 scipy==1.15.1
 six==1.17.0
 stack-data==0.6.3

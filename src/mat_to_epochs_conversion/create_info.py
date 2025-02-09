@@ -3,10 +3,11 @@ from tests import output_tests
 import traceback, glob
 from src import config
 from tests import input_validation_tests
+from beartype import beartype
 
-
+@beartype
 # in case a raw object exists:
-def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info|None:
+def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info:
     """
 
     Recieves:
@@ -37,7 +38,7 @@ def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info|None:
         # drop all bad channels and reference channels (leaves 246 channels)
         raw.drop_channels(config.bad_ch_names)
         
-        # extracts only info from raw object
+        # extracts info from raw object
         raw_info = raw.info
             
             
@@ -45,18 +46,16 @@ def extract_raw_info(folder_directory: str|os.PathLike) -> mne.Info|None:
         print("An error occured:", e)
         traceback.print_exc()
 
-    #returns raw_info, if doesn't exist due to exception, return an empty dictionary
-    if 'raw_info' not in locals():
-        raw_info = None
     return raw_info
 
 
+@beartype
 #in case a raw object doesn't exist - manual creation of mne.Info:
-def create_mne_info(sub_dict: dict) -> mne.Info|None:
+def create_mne_info(sub_dict: dict) -> mne.Info:
     """
     Recieves:
-    * sub_dict: dictionary with fields ['data']['trial'], ['data']['trialinfo'], 
-    ['data']['grad']['label'], ['data']['fsample'].  
+    * sub_dict: dictionary with fields ['datafinalLow']['trial'], ['datafinalLow']['trialinfo'], 
+    ['datafinalLow']['grad']['label'], ['datafinalLow']['fsample'].  
 
     Function:
     * Creates a manual mne.Info instance with info: channel names, channel_types, sampling frequency
@@ -81,17 +80,14 @@ def create_mne_info(sub_dict: dict) -> mne.Info|None:
 
     else:
         try:
-            _, _, ch_names, sfreq = extract_from_dict(sub_dict)
+            _, _, ch_names, sfreq = extract_from_dict(sub_dict) #ec=xtracts from the dictionary that has the epoched data the channel names and sampling frequency.
             ch_types = np.array(config.channels_number * ['mag']) # create 246 'mag' channel types relating to the 246 extracted channel names in extract_from_dict channels 
-            mne_info = mne.create_info(ch_names, sfreq, ch_types, verbose=None)
+            mne_info = mne.create_info(ch_names, sfreq, ch_types, verbose=None)  
         
         except Exception as e:
             print("An error occured:", e)
             traceback.print_exc()
 
-    #returns mne_info, if doesn't exist due to exception, return None
-    if mne_info not in locals():
-        mne_info = None
     return mne_info
 
 
