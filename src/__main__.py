@@ -25,7 +25,7 @@ if __name__ == "__main__":
         from tests import output_tests, input_validation_tests
     
     except Exception as e:
-        print("problem with modules importation in __main__.py")
+        print("problem with modules importation in __main__.py", e)
 
     try:
         print("Start of script run")
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
                     # csd calculation of baseline over the desired frequency range, save and add to report. (calculates csd baseline for the last 
                     # condition in loop, we assume that all conditions have same baseline activity)
-                    csd_baseline, csd_baseline_mean = compute_csd.compute_csd(epochs, condition, config.freq_bands, config.baseline_time, is_base_line=True)
+                    csd_baseline, csd_baseline_mean = compute_csd.compute_csd(epochs, condition, config.freq_bands, config.baseline_time, is_baseline=True)
                     output_tests.test_csd(csd_baseline)
                     output_tests.test_csd(csd_baseline_mean)
                     
